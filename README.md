@@ -2,6 +2,8 @@
 2025 Bachlors project at HVL with ATLAS group in UIB. Can add more later
 
 ## SETUP
+We assume you already have python 3.9.6 or newer THIS IS JUST WHAT I HAVE NOT A REAL MINIMUM
+
 ### STEP 1 - Install NI-VISA
 This is for controlling the Highvoltage power supply (grab some text form that link)
 https://www.ni.com/en/support/downloads/drivers/download.ni-488-2.html?srsltid=AfmBOoqgh0lgB955pOPCkuwX9M7VUnNrGW0I8cZiu6bDadTudPAP7k8L
@@ -16,14 +18,15 @@ This is the python library we use to send the SCPI commands.
 pip install pyvisa
 ```
 
-### Step 4 - Updateting scipt
-Aftter plugging in the usb ports you need to make sure the addresses are currect. You do this by... maybe make another scipt for this idk
+### Step 4 - Pysical setup
+Here are are assuming the DAQ extention car is already wired up. Plug the 40 pin conenctor into the apapter card make sure to plug it in currectly by matching up the triangles.
+Turn on and plug the DAQ and Model 2400 into your computer. Plug in the barcode scaner in your computer too.
 
-NEEDS TO INCLUDE PULLING FROM THIS REPO!!!!!!
-You need python installed maybe give minimum version or the version we use is the min!!!!
-BARCODE SCANNER!!!!
+### Step 5 - Clone the repo
+Clone the repository PUT COMMAND BELOW
 
-### Step 5: turn shit on and connect
+### Step 6 - Updateting scipt
+Aftter plugging in the usb ports you need to make sure the addresses are still currect. You do this by... maybe make another scipt for this idk. Now you are able to start testing.
 
 ## OPERATION
 Here we are assuming you have plugged in the DAQ970 and Model 2400 into you computer and if nececssary have updated their respective address in the code. It is also assumed that the 40pin connector from the DAQ is plugged into the apapter board. We also assume you turned both machines on. High voltage boi plugged in too but maybe we just assume that u have finished the setup section
