@@ -1,48 +1,65 @@
 # FLEX_PCB_ELECTRICAL_TEST
-2025 Bachlors project at HVL with ATLAS group in UIB. Can add more later
+2025 Bachelor's project at HVL with the ATLAS group in UIB, in coordination with UIO.  
+This repository is dedicated to the electrical testing part of the quality control testing for the FLEX PCBs.  
+*(IDK how much info we should put here)*
+
+---
 
 ## SETUP
-We assume you already have python 3.9.6 or newer THIS IS JUST WHAT I HAVE NOT A REAL MINIMUM
 
-### STEP 1 - Install NI-VISA
-This is for controlling the Highvoltage power supply (grab some text form that link)
-https://www.ni.com/en/support/downloads/drivers/download.ni-488-2.html?srsltid=AfmBOoqgh0lgB955pOPCkuwX9M7VUnNrGW0I8cZiu6bDadTudPAP7k8L
+### Prerequisites
+- **DAQ970A** with multiplexer card properly wired up to a 40-pin connector  
+- **Keithley Model 2400** *(WILL CHANGE TO ANOTHER HIGH VOLTAGE TOOL)*  
+- **Adapter board** and its ribbon cables *(IDK IF WE GOT A NAME FOR THIS)*
+- Minimum **Python 3.9.6** *(THIS IS JUST WHAT I HAVE, NOT A REAL MINIMUM)*  
 
-### STEP 2 - Install VISA
-This allows us to talk to the DAQ970. Note that a prerequisite is IO Libraries Suite. Both can be found below in the link. 
-https://www.keysight.com/us/en/lib/software-detail/driver/daq970-data-acquisition-system-python-instrument-drivers.html
+### STEP 1 - Install NI-VISA for the Keithley Model 2400  
+*(COULD CHANGE SO DON’T WANNA ADD TEXT HERE)*
 
-### STEP 3 - Install pyvisa
-This is the python library we use to send the SCPI commands.
+Follow the steps from this [link](https://www.ni.com/en/support/downloads/drivers/download.ni-488-2.html?srsltid=AfmBOoqgh0lgB955pOPCkuwX9M7VUnNrGW0I8cZiu6bDadTudPAP7k8L).
+
+### STEP 2 - Install VISA for the DAQ970A  
+Follow the steps from this [link](https://www.keysight.com/us/en/lib/software-detail/driver/daq970-data-acquisition-system-python-instrument-drivers.html).
+
+### STEP 3 - Install PyVISA  
+This is the Python library we use to send SCPI commands.  
 ```bash
 pip install pyvisa
 ```
 
 ### Step 4 - Pysical setup
-Here are are assuming the DAQ extention car is already wired up. Plug the 40 pin conenctor into the apapter card make sure to plug it in currectly by matching up the triangles.
-Turn on and plug the DAQ and Model 2400 into your computer. Plug in the barcode scaner in your computer too.
+1. Plug th DAQ into the adapter card with the 40pin connector and your computer with the usb cable.
+2. Plug the Keithley Model 2400 in the apapter card and your computer with the usb cable.
+3. Plug in the barcode reader
 
 ### Step 5 - Clone the repo
-Clone the repository PUT COMMAND BELOW
+```bash
+git clone https://github.com/DarthMaxwell/FLEX_PCB_ELECTRICAL_TEST.git
+```
 
 ### Step 6 - Updateting scipt
 Aftter plugging in the usb ports you need to make sure the addresses are still currect. You do this by... maybe make another scipt for this idk. Now you are able to start testing.
 
+---
+
 ## OPERATION
-Here we are assuming you have plugged in the DAQ970 and Model 2400 into you computer and if nececssary have updated their respective address in the code. It is also assumed that the 40pin connector from the DAQ is plugged into the apapter board. We also assume you turned both machines on. High voltage boi plugged in too but maybe we just assume that u have finished the setup section
+Assuming the setup is finished.
 
 ### Step 1: Connect the FLEX PCB to the apapter board.
-more details
-Lay the FLEX PCB as the outline on the apapter board shows and connect the three ribbin cables to there respective conectors.
+There is a layout on the adapter board for how the FLEX PCB should be.
+1. Slide the FLEX PCB into position connecting the middle ribben cable as you do so.
+2. Take the the other two ribben cables and connect then to their respective sides of the FLEX PCB. Simply push down gently to make the connection.
 
 ### Step 2: Running the script
-Open your terminal and find your way to the scipt. Run the python scipt
+1. Open your terminal and navigate to the script's directory.
+2. Run the Python scipt
 ```Bash
 electrical_test.py
 ```
-It will prompt you to scan the flex. You can use a barcode scaner on th barcode or manually type in the ID of the FLEX PCB you are testing.
-It will then run thought the test printing out if a channel has passed or failed with the resistance measured. It will also print out when testing the volatge. !!!!MAYBE JUST SAY IT WILL PRINT OUT UPDATING INFRO TO KEEP YOU IN THE LOOP OF WHT HAPPENING TO KEEP PROGRESS
-When the script is finished it will create a json with the name of the FLEX PCB ID given.
+3. The script will prompt you to scan the FLEX PCB. You can either use a barcode scanner on the barcode or manually type in the ID of the FLEX PCB you are testing.
+4. It will print out information to show results and progress.
+5. Once finished, it will create a JSON with the name of the FLEX PCB ID given.
 
 ### Step 3: Disconnect the FLEX PCB
-Disconnect the FLEX PCB by lifting up the the 2 ribben connectors on the edge and then you can pull the FLEX PCB away disconnecting the middle ribben cable.
+1. Disconnect the two ribben cables on the sides by gently lifting up on them
+2. Slide the FLEX PCB away from disconnecting the middle ribben cable.
