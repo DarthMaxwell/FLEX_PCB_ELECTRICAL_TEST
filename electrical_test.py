@@ -8,9 +8,9 @@ def main():
     LIMIT_LOW =  [None, None, 8000,  1000000, 1000000, 1000000, 1000000, None, None, 1000000, 1000000, 1000000, 90,  1000000, 1000000, 8000,  1000000, 1000000]
     LIMIT_HIGH = [2,    2,    12000, None,    None,    None,    None,    2,    2,    None,    None,    None,    110, None,    None,    15000, None,    None]
     HI_LO = ["VRET-VRET_S", "VRET-Vref", "VRET-HV_RET", "VRET-VIN", "VRET-CMD_N,GTXi_N", "VRET-NTC,LP_EN", "VRET-GND_C", "VIN-VIN_S", "VIN-Vsen", "VIN-CMD_N,GTXi_N", "VIN-NTC,LP_EN", "VIN-GND_C", "CMD_N,GTXi_N-CMD_P,GTXi_P", "CMD_N,GTXi_N-NTC,LP_EN", "CMD_N,GTXi_N-GND_C", "NTC,LP_EN-NTC_RET,MUX", "NTC,LP_EN-GND_C", "GND-GND_C"]
-    VOLTAGE = [-200, 0, 200, 0] #SHOULD BE 300 INSTEAD of 200
+    VOLTAGE = [-300, 0, 300, 0]
 
-    results = []
+    results = [] # maybe change this to resistance
     current = []
     passed = True
 
@@ -26,7 +26,7 @@ def main():
         return None
 
     def testChannelLowerLimit(channel, lowerLimit):
-        passed #maybe we dont need global now can test rn tho
+        global passed
         timeout = DEFAULT_TIMEOUT
 
         while (timeout):
@@ -35,17 +35,15 @@ def main():
             if (res is not None):
                 if (res > lowerLimit):
                     print("Channel {} passed - {}".format(channel, res))
-                    passed = passed and True
                     return res
                 
             timeout -= 1
 
-        passed = passed and False
-        print("Channel {} failed - {}".format(channel, res))
+        passed = False
+        print("Channel {} failed - {}".format(channel, res)) #im i stupid how do we see res?
         return res
 
     def testChannelUpperLimit(channel, upperLimit):
-        passed
         timeout = DEFAULT_TIMEOUT
 
         while(timeout):
@@ -54,17 +52,17 @@ def main():
             if (res is not None):
                 if (res < upperLimit):
                     print("Channel {} passed - {}".format(channel, res))
-                    passed = passed and True
                     return res
                 
             timeout -= 1
 
-        passed = passed and False
+        global passed
+        passed = False
         print("Channel {} failed - {}".format(channel, res))
         return res
 
     def testChannelBothLimits(channel, lowerLimit, upperLimit):
-        passed
+        global passed
         timeout = DEFAULT_TIMEOUT
 
         while (timeout):
@@ -73,23 +71,22 @@ def main():
             if (res is not None):
                 if (lowerLimit < res and res < upperLimit):
                     print("Channel {} passed - {}".format(channel, res))
-                    passed = passed and True
                     return res
                 
             timeout -= 1
 
-        passed = passed and False
+        passed = False
         print("Channel {} failed - {}".format(channel, res))
         return res
 
     def testCurrent(voltage):
-        passed
+        global passed
 
         keithley.write(":SOUR:VOLT {}".format(voltage))
         keithley.write(":OUTP ON")
         time.sleep(0.5)
         res = keithley.query(":MEAS:CURR?")
-        current = float(res.split(",")[1])
+        current = float(res.split("NDCI")[1])
 
         if (0.0000002 < current and current < -0.0000002):
             passed = False
@@ -114,7 +111,7 @@ def main():
 
     zipped = list(zip(range(101,118), LIMIT_LOW, LIMIT_HIGH))
 
-    for (c, l, u) in zipped:
+    """for (c, l, u) in zipped:
         if (l is None):
             #Test upper
             res = testChannelUpperLimit(c,u)
@@ -124,18 +121,18 @@ def main():
         else:
             res = testChannelBothLimits(c, l, u)
 
-        results.append(res)
+        results.append(res)"""
 
     #Short all the channels on the DAQ
     daq.write(":ROUT:TERN:ALL SHORT")
 
     # KEITHLEY part just at 200v rn so might need to fix later
     rm = pyvisa.ResourceManager(r"C:\Windows\System32\visa32.dll")
-    keithley = rm.open_resource("GPIB0::24::INSTR")
+    keithley = rm.open_resource("GPIB0::03::INSTR")
 
     keithley.write("*RST")
     keithley.write(":SOUR:FUNC VOLT")
-    keithley.write(":SOUR:VOLT:RANG 200") # might need to change this
+    keithley.write(":SOUR:VOLT:RANG 300") # might need to change this
 
     for v in VOLTAGE:
         current.append(testCurrent(v))
