@@ -21,6 +21,7 @@ def main():
     passed = True
 
     #BASSICLY IF THE RESULTS HAVE A NONE IN THEM THEN THAT MEANS SOMTHING IN THE MACHINE FAILED
+    #We use 1 retry to speed things up cuase we will still try 10 times before we move on
     def safeQueryDAQ(cmd, retries=1):
         for _ in range(retries):
             try:
@@ -51,13 +52,13 @@ def main():
 
             if (res is not None):
                 if (res > lowerLimit):
-                    print("Channel {} passed - {}".format(channel, res))
+                    print("Channel {} passed - {}ohms".format(channel, res))
                     return res
                 
             timeout -= 1
 
         passed = False
-        print("Channel {} failed - {}".format(channel, res))
+        print("Channel {} failed - {}ohms".format(channel, res))
         return res
 
     def testChannelUpperLimit(channel, upperLimit, timeout=DEFAULT_TIMEOUT):
@@ -68,13 +69,13 @@ def main():
 
             if (res is not None):
                 if (res < upperLimit):
-                    print("Channel {} passed - {}".format(channel, res))
+                    print("Channel {} passed - {}ohms".format(channel, res))
                     return res
                 
             timeout -= 1
 
         passed = False
-        print("Channel {} failed - {}".format(channel, res))
+        print("Channel {} failed - {}ohms".format(channel, res))
         return res
 
     def testChannelBothLimits(channel, lowerLimit, upperLimit, timeout=DEFAULT_TIMEOUT):
@@ -85,13 +86,13 @@ def main():
 
             if (res is not None):
                 if (lowerLimit < res and res < upperLimit):
-                    print("Channel {} passed - {}".format(channel, res))
+                    print("Channel {} passed - {}ohms".format(channel, res))
                     return res
                 
             timeout -= 1
 
         passed = False
-        print("Channel {} failed - {}".format(channel, res))
+        print("Channel {} failed - {}ohms".format(channel, res))
         return res
 
     def testCurrent(start, end):
@@ -112,13 +113,15 @@ def main():
         kei.write('T5X')
         kei.write('X')
 
-        current = safeReadKEI
+        current = safeReadKEI()
 
         if not (-2e-8 < current < 2e-8):
+            print("Voltage {}V -> {}V failed - {}A".format(start, end, current))
             passed = False
+            return current
 
+        print("Voltage {}V -> {}V passed - {}A".format(start, end, current))
         return current
-
 
     component = input("Scan flex: ")
     start = time.time()
@@ -137,9 +140,9 @@ def main():
     # we can use list comprehention to make it faster as now we dont have to have an append call everytime can use more memory but propably not a problem
     resistance = [
         testChannelUpperLimit(c, u) if l is None else
-        testChannelLowerLimit(c, l) if c is None else
+        testChannelLowerLimit(c, l) if u is None else
         testChannelBothLimits(c, l, u)
-        for c, l, u in zip(range(101,118), LIMIT_LOW, LIMIT_HIGH)
+        for c, l, u in zip(range(101,119), LIMIT_LOW, LIMIT_HIGH)
     ]
 
     #Short all the channels on the DAQ
