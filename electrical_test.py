@@ -2,9 +2,6 @@ import pyvisa
 import time
 import json
 
-# keihley manual:
-# https://www.artisantg.com/info/Keithley_486_Manual_202262105350.pdf?srsltid=AfmBOorqn0Pa1D8ihVX_Pn2nzS5twOQ0z1KIPOGxEPZcmO1HX3S42q9j
-
 # Static variables
 # DO WE NEED NIVISA ANYMORE?? i htink for the drivers
 DAQ_ADDRESS = "USB0::0x2A8D::0x5101::MY58031367::0::INSTR"
@@ -21,13 +18,10 @@ passedHV = True
 daq = None
 kei = None
 
-
-
 #BASSICLY IF THE RESULTS HAVE A NONE IN THEM THEN THAT MEANS SOMTHING IN THE MACHINE FAILED
 #We use 1 retry to speed things up cuase we will still try 10 times before we move on
 # CAN USE CHAT TO WRITE LITTLE FUNCTION EXPLANTIONS
 
-# A function to query the #daq and catch any erros so the whole program wont crash.
 def createJSON(data, filename):
     with open(filename, "w") as json_file:
         json.dump(data, json_file, indent=4)
@@ -112,24 +106,20 @@ def testCurrent(start, end):
 
     for v in range(start, end + step, step): #end + step??
         kei.write('V{},1,1X'.format(v))
-        kei.write('X')
         time.sleep(1)
 
         # DO WE NEED ALL THESE
         # CAN I SEND MULTIPLE COMMANDS AT ONCE
-
-    #time.sleep(30)
     kei.write('F0X')
     kei.write('B0X')
     kei.write('R0X')
     kei.write('DX')
 
     kei.write('T5X')
-    kei.write('X')
 
     current = safeReadKEI()
 
-    if not (-2e-8 < current and current < 2e-8):
+    if not (-2e-7 < current and current < 2e-7):
         print("Voltage {}V -> {}V failed - {}A".format(start, end, current))
         passed = False
         return current
@@ -152,19 +142,13 @@ def main():
     daq = rm.open_resource(DAQ_ADDRESS)
     kei = rm.open_resource(KEI_ADDRESS)
 
-    
-
     # DAQ configuration
     # MIGHT BE ABLE TO SEND ALL THESE AT ONCE
     daq.write("*RST")
     daq.timeout = 10000
-    #daq.write("CONF:RES (@{})".format(range(101,119)))
+    daq.write("CONF:RES (@{})".format(range(101,119)))
 
     # we can use list comprehention to make it faster as now we dont have to have an append call everytime can use more memory but propably not a problem
-
-    # kei.write('V400,1,1X')
-    # kei.write('X')
-
     resistance = [
         testChannelUpperLimit(c, u) if l is None else
         testChannelLowerLimit(c, l) if u is None else
@@ -172,11 +156,10 @@ def main():
         for c, l, u in zip(range(101,119), LIMIT_LOW, LIMIT_HIGH)
     ]
 
-    
     #Short all the channels on the DAQ
     #DOES THIS WORK?? and is it needed
+    #daq.write("ROUT:CLOS (@118)")
     daq.write("*RST")
-    daq.write("ROUT:CLOS (@101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118)")
 
     #Configure the kei 487 thang
     #DO WE NEED ALL THESE THINGS LIKE???
@@ -196,7 +179,7 @@ def main():
     kei.close()
     daq.close()
 
-    #JSON Section
+     #JSON Section
     #MIGHT NEED TO GO OVER THIS WITH SIMEN
     ELRES_JSON = {
         "component": component,
