@@ -6,20 +6,18 @@ import json
 # https://www.artisantg.com/info/Keithley_486_Manual_202262105350.pdf?srsltid=AfmBOorqn0Pa1D8ihVX_Pn2nzS5twOQ0z1KIPOGxEPZcmO1HX3S42q9j
 
 # Static variables
-# This is so they can be easliy updated if needed
 # DO WE NEED NIVISA ANYMORE?? i htink for the drivers
 DAQ_ADDRESS = "USB0::0x2A8D::0x5101::MY58031367::0::INSTR"
 KEI_ADDRESS = "GPIB0::22::INSTR"
-DEFAULT_TIMEOUT = 15 # we dont use time here cuase we want to test 10 times before we fail it so it can build charge for some of them
-# The Channel is used as the index
+DEFAULT_TIMEOUT = 15
 LIMIT_LOW =  [None, None, 8000,  1000000, 1000000, 1000000, 1000000, None, None, 1000000, 1000000, 1000000, 90,  1000000, 1000000, 8000,  1000000, 1000000]
 LIMIT_HIGH = [2,    2,    12000, None,    None,    None,    None,    2,    2,    None,    None,    None,    110, None,    None,    15000, None,    None]
-# below is just for the json really
 HI_LO = ["VRET-VRET_S", "VRET-Vref", "VRET-HV_RET", "VRET-VIN", "VRET-CMD_N,GTXi_N", "VRET-NTC,LP_EN", "VRET-GND_C", "VIN-VIN_S", "VIN-Vsen", "VIN-CMD_N,GTXi_N", "VIN-NTC,LP_EN", "VIN-GND_C", "CMD_N,GTXi_N-CMD_P,GTXi_P", "CMD_N,GTXi_N-NTC,LP_EN", "CMD_N,GTXi_N-GND_C", "NTC,LP_EN-NTC_RET,MUX", "NTC,LP_EN-GND_C", "GND-GND_C"]
 VOLTAGE = [(0,-300), (-300, 0), (0, 300), (300, 0)]
 
 # Global vairabled
-passed = True
+passedRES = True
+passedHV = True
 daq = None
 kei = None
 
@@ -27,12 +25,14 @@ kei = None
 
 #BASSICLY IF THE RESULTS HAVE A NONE IN THEM THEN THAT MEANS SOMTHING IN THE MACHINE FAILED
 #We use 1 retry to speed things up cuase we will still try 10 times before we move on
+# CAN USE CHAT TO WRITE LITTLE FUNCTION EXPLANTIONS
 
 # A function to query the #daq and catch any erros so the whole program wont crash.
 def createJSON(data, filename):
     with open(filename, "w") as json_file:
         json.dump(data, json_file, indent=4)
 
+# A function to query the #daq and catch any erros so the whole program wont crash.
 def safeReadDAQ(channel, retries=1):
     for _ in range(retries):
         try:
@@ -45,7 +45,6 @@ def safeReadDAQ(channel, retries=1):
     return None
 
 def safeReadKEI(retries=1):
-    #time.sleep(60)
     for _ in range(retries):
         try:
             res = kei.read()
@@ -53,7 +52,7 @@ def safeReadKEI(retries=1):
         except Exception as e:
             print("Error: {}, retrying...".format(e))
             time.sleep(1)
-            kei.clear() # is this possible or ?
+            #kei.clear() # is this possible or ?
     return None
 
 def testChannelLowerLimit(channel, lowerLimit, timeout=DEFAULT_TIMEOUT):
@@ -205,7 +204,7 @@ def main():
         "institution": "UNIBERGEN",
         "date": date,
         "prefix": "",
-        "passed": passed,
+        "passed": passedRES,
         "HI-LO": HI_LO,
         "RES": {
             "resistance": resistance,
@@ -216,11 +215,11 @@ def main():
 
     ELHV_JSON = {
         "component": component,
-        "test": "Electrical_RES",
+        "test": "Electrical_HV",
         "institution": "UNIBERGEN",
         "date": date,
         "prefix": "",
-        "passed": passed,
+        "passed": passedHV,
         "HV": {
             "current": current,
             "range": [-2e-07, 2e-07],
