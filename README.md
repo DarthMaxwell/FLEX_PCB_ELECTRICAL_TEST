@@ -1,24 +1,45 @@
 # FLEX_PCB_ELECTRICAL_TEST
 2025 Bachelor's project at HVL with the ATLAS group in UIB, in coordination with UIO.  
-This repository is dedicated to the electrical testing part of the quality control testing for the FLEX PCBs.  
+This repository is dedicated to the electrical testing part of the quality control testing for the FLEX PCBs.
 
-## OPERATION
+## Test Procedure
+### Step 1: Select correct adapter board
+Identify the adapter board by name and PCB outline.
+### Step 2: Connect the 40-pin cable
+Make sure the locks on either side of the connector are fully open.
+Line the notchs up with eachother and press down until the locks close fully
+Make sure the cable is properly connected
+### Step 3: Connect the high-voltage cable
+Press the cable all the way into the connector there is not lock.
+Dosnt matter which direction you plug it in by.
+### Step 4: Prepare the work area and ESD protection
+Keep the area clean and dry.
+Wear antistatic nitrile gloves.
+Handle PCBs with care
+### Step 5: Unpack the PCB from its antistatic bag and place the PCB in the adapter board.
+Avoid contact with conductive traces and sensitive components.
+Do not bend the board or use excessive force.
+Follow the outline for correct positioning.
+Use plastic tools if necessary.
+### Step 6: Koble til båndkablene (3 stk)
+#### Middle cable:
+Open the ribben connector.
+Insert the cable and close the lock.
+#### Outer cables:
+Adjust and gently press down on the connectors.
+### Step 7: Start the script from terminal or IDE.
+Enter PCB ID
+Use barcode scanner or enter manually.
+The script performs Resistance Tests and Current Leakage Tests.
+Results are saved automatically.
+### Step 8: Disconnect PCB
+Wear antistatic gloves.
+Carefully detach the two outer ribbon cables.
+Open the middle latch and pull the PCB straight out (do not bend).
+### Step 9: Store PCB
+Place PCB back in the antistatic bag.
+### Step 10: Disconnect adapter board if necessary
+Disconnect high voltage cable first.
+Open the latches on the 40-pin connector and pull the cable straight up.
 
-### Step 1: Connect the FLEX PCB to the apapter board.
-There is a layout on the adapter board for how the FLEX PCB should be.
-1. Slide the FLEX PCB into position connecting the middle ribben cable as you do so.
-2. Take the the other two ribben cables and connect then to their respective sides of the FLEX PCB. Simply push down gently to make the connection.
-
-### Step 2: Running the script
-1. Open your terminal and navigate to the script's directory.
-2. Run the Python scipt
-```Bash
-electrical_test.py
-```
-3. The script will prompt you to scan the FLEX PCB. You can either use a barcode scanner on the barcode or manually type in the ID of the FLEX PCB you are testing.
-4. It will print out information to show results and progress.
-5. Once finished, it will create a JSON with the name of the FLEX PCB ID given.
-
-### Step 3: Disconnect the FLEX PCB
-1. Disconnect the two ribben cables on the sides by gently lifting up on them
-2. Slide the FLEX PCB away from disconnecting the middle ribben cable.
+## Ready for the next test.
